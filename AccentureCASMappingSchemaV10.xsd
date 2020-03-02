@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Object" type="ObjectType"/>
+
+    <xs:complexType name="ObjectType">
+        <xs:sequence>
+            <xs:element name="OERs" type="OERsType"/>
+            <xs:element name="RejectConditions" type="RejectConditionsType" minOccurs ="0" maxOccurs ="unbounded"/>
+            <xs:element name="DLLs" type="DLLsType" minOccurs ="0" />
+            <xs:element name="Macros" type="MacrosType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Transformations" type="TransformationsType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Lookups" type="LookupsType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <xs:attribute name="Name" type="xs:string" use="required" />
+        <xs:attribute name="Source" type="DomObjectSource" use="required" />
+        <xs:attribute name="Destination" type="DomObjectSource" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name ="OERsType">
+        <xs:sequence>
+            <xs:element name="OER" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="HostKeyFallbacks" type="HostKeyFallBacksType"/>
+                    </xs:sequence>
+                    <xs:attribute name="Name" type="xs:string" use="required" />
+                    <xs:attribute name="ParentCDO" type="xs:string" use="optional" />
+                    <xs:attribute name="ParentColumn" type="xs:string" use="optional" />
+                    <xs:attribute name="ChildCDO" type="xs:string" use="optional" />
+                    <xs:attribute name="ChildColumn" type="xs:string" use="optional" />
+                    <xs:attribute name="Ignore" type="xs:string" use="optional" />
+                    <xs:attribute name="HostkeyCaching" type="DomBoolean" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name ="HostKeyFallBacksType">
+        <xs:sequence>
+            <xs:element name="HostKeyFallback">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="HostKey">
+                            <xs:complexType>
+                                <xs:attribute name="Attribute" type="xs:string" use="required" />
+                                <xs:attribute name="Source" type="xs:string" use="required" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name ="RejectConditionsType">
+        <xs:sequence>
+            <xs:element name="RejectCondition" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Source" type="xs:string" use="required" />
+                    <xs:attribute name="Operator" type="DomOperatorTypes" use="required" />
+                    <xs:attribute name="Value" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name ="MacrosType">
+        <xs:sequence>
+            <xs:element name="Macro" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Name" type="xs:string" use="required" />
+                    <xs:attribute name="Type" type="DomMacroTypes" use="required" />
+                    <xs:attribute name="Source" type="DomMacros" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name ="DLLsType">
+        <xs:sequence>
+            <xs:element name ="DLL" maxOccurs ="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Name" type="xs:string" use="required" />
+                    <xs:attribute name="Library" type="xs:string" use="required" />
+                    <xs:attribute name="Object" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name ="TransformationsType">
+        <xs:sequence>
+            <xs:element name="Transform" type="TransformType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <xs:attribute name="Source" type="xs:string" use="required" />
+        <xs:attribute name="Target" type="xs:string" use="required" />
+        <xs:attribute name="CondParam1" type="xs:string" use="optional" />
+        <xs:attribute name="CondType1" type="DomTransformTypes" use="optional" />
+        <xs:attribute name="ConditionComparator" type="DomComparatorTypes" use="optional" />
+        <xs:attribute name="CondParam2" type="xs:string" use="optional" />
+        <xs:attribute name="CondType2" type="DomTransformTypes" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name ="TransformType" mixed ="true">
+        <xs:sequence minOccurs="0">
+            <xs:element name="ObjectParameter" type="ParameterType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Parameter" type="ParameterType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Case" minOccurs="0" maxOccurs ="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="Source" type="DomTransformSource" use="required" />
+                    <xs:attribute name="Dest" type="xs:string" use="required" />
+                    <xs:attribute name="Type" type="DomTransformTypes" use="optional" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Otherwise" minOccurs="0" >
+                <xs:complexType>
+                    <xs:attribute name="Dest" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Fallback" minOccurs="0" type="FallbackType"/>
+        </xs:sequence>
+        <xs:attribute name="Attribute" type="xs:string" use="required" />
+        <xs:attribute name="Type" type="DomTransformTypes" use="required" />
+        <xs:attribute name="Source" type="DomTransformSource" use="required" />
+        <xs:attribute name="Field" type="xs:string" use="optional" />
+        <xs:attribute name="Special" type="DomSpecialTypes" use="optional" />
+        <xs:attribute name ="OnlyNew"  type="DomBoolean" use="optional" />
+        <xs:attribute name ="DataType"  type="DomDataTypes" use="optional" />
+        <xs:attribute name ="CondType1"  type="DomTransformTypes" use="optional" />
+        <xs:attribute name ="CondParam1"  type="xs:string" use="optional" />
+        <xs:attribute name ="ConditionComparator"  type="DomComparatorTypes" use="optional" />
+        <xs:attribute name ="CondType2"  type="DomTransformTypes" use="optional" />
+        <xs:attribute name ="CondParam2"  type="xs:string" use="optional" />
+        <xs:attribute name ="DateHandling"  type="DomDatehandlingType" use="optional" />
+        <xs:attribute name ="Range"  type="xs:string" use="optional" />
+        <xs:attribute name ="Caching"  type="xs:string" use="optional" />
+        <xs:attribute name ="DisableToggleValidation"  type="DomBoolean" use="optional" />
+    </xs:complexType>
+
+    <xs:simpleType name ="DomTransformSource">
+        <xs:union memberTypes ="DomSelfRoot" />
+    </xs:simpleType>
+    <xs:simpleType name ="DomSelfRoot">
+        <xs:restriction base ="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:pattern value="self.([a-z][A-Z])*"/>
+            <xs:pattern value="root.([a-z][A-Z])*"/>
+        </xs:restriction>
+        
+                        
+    </xs:simpleType>
+    <xs:complexType name ="ParameterType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Parameter" type ="ParameterType"/>
+        </xs:sequence>
+        <xs:attribute name="Type" type="DomParameterTypes" use="required" />
+        <xs:attribute name="Source" type="xs:string" use="required" />
+        <xs:attribute name="Attribute" type="xs:string" use="optional" />
+        <xs:attribute name="Field" type="xs:string" use="optional" />
+        <xs:attribute name="ConditionComparator"  type="DomComparatorTypes" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name ="FallbackType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="Parameter" type="ParameterType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Fallback" type="FallbackType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Type" type="DomFallbackTypes" use="required" />
+        <xs:attribute name="Source" type="xs:string" use="optional" />
+        <xs:attribute name="Field" type="xs:string" use="optional" />
+        <xs:attribute name="CondParam1" type="xs:string" use="optional" />
+        <xs:attribute name="CondType1" type="DomTransformTypes" use="optional" />
+        <xs:attribute name="ConditionComparator" type="xs:string" use="optional" />
+        <xs:attribute name="CondParam2" type="xs:string" use="optional" />
+        <xs:attribute name="CondType2" type="DomTransformTypes" use="optional" />
+        <xs:attribute name="OnlyNew" type="DomBoolean" use="optional" />
+        <xs:attribute name="Attribute" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name ="LookupsType">
+        <xs:sequence>
+            <xs:element name ="Lookup" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="ForeignKey" type="xs:string" use="optional" />
+                    <xs:attribute name="Child" type="xs:string" use="optional" />
+                    <xs:attribute name="PKey" type="xs:string" use="optional" />
+                    <xs:attribute name ="Parent" type ="xs:string" use ="optional"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="Source" type="xs:string" use="optional" />
+        <xs:attribute name="Target" type="xs:string" use="optional" />
+        <xs:attribute name="CondParam1" type="xs:string" use="optional" />
+        <xs:attribute name="CondType1" type="DomTransformTypes" use="optional" />
+        <xs:attribute name="ConditionComparator" type="DomOperatorTypes" use="optional" />
+        <xs:attribute name="CondParam2" type="xs:string" use="optional" />
+        <xs:attribute name="CondType2" type="DomTransformTypes" use="optional" />
+    </xs:complexType>
+    <!-- Types -->
+
+    <xs:simpleType name="DomMacroTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Constant"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name ="DomMacros">
+        <xs:union memberTypes="xs:string DomPredefinedMacros" />
+    </xs:simpleType>
+
+    <xs:simpleType name="DomPredefinedMacros">
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:enumeration value="$Now"/>
+            <xs:enumeration value="$Today"/>
+            <xs:enumeration value="$MinDate"/>
+            <xs:enumeration value="$MaxDate"/>
+            <xs:enumeration value="$ValidFrom"/>
+            <xs:enumeration value="$ValidThru"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DomTransformTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Constant"/>
+            <xs:enumeration value="Copy"/>
+            <xs:enumeration value="SelfCopy"/>
+            <xs:enumeration value="MetaCopy"/>
+            <xs:enumeration value="CopyMatch"/>
+            <xs:enumeration value="SourceValue"/>
+            <xs:enumeration value="LookupObjectValue"/>
+            <xs:enumeration value="SelectCase"/>
+            <xs:enumeration value="SpecialLookupValue"/>
+            <xs:enumeration value="DefaultToggleValue"/>
+            <xs:enumeration value="StringFunction"/>
+            <xs:enumeration value="OutboundLookup"/>
+            <xs:enumeration value="Formula"/>
+            <xs:enumeration value="Count"/>
+            <xs:enumeration value="URL"/>
+            <xs:enumeration value="FrameworkCall"/>
+            <xs:enumeration value="NodeName"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DomParameterTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Constant"/>
+            <xs:enumeration value="Copy"/>
+            <xs:enumeration value="SelfCopy"/>
+            <xs:enumeration value="MetaCopy"/>
+            <xs:enumeration value="MatchCopy"/>
+            <xs:enumeration value="LookupObjectValue"/>
+            <xs:enumeration value="SelectCase"/>
+            <xs:enumeration value="SpecialLookupValue"/>
+            <xs:enumeration value="SelectCase"/>
+            <xs:enumeration value="StringFunction"/>
+            <xs:enumeration value="OutboundLookup"/>
+            <xs:enumeration value="Formula"/>
+            <xs:enumeration value="Count"/>
+            <xs:enumeration value="SUM"/>
+            <xs:enumeration value="MIN"/>
+            <xs:enumeration value="MAX"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DomFallbackTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Constant"/>
+            <xs:enumeration value="Copy"/>
+            <xs:enumeration value="SelfCopy"/>
+            <xs:enumeration value="MetaCopy"/>
+            <xs:enumeration value="MatchCopy"/>
+            <xs:enumeration value="LookupObjectValue"/>
+            <xs:enumeration value="SelectCase"/>
+            <xs:enumeration value="SpecialLookupValue"/>
+            <xs:enumeration value="SelectCase"/>
+            <xs:enumeration value="StringFunction"/>
+            <xs:enumeration value="OutboundLookup"/>
+            <xs:enumeration value="Formula"/>
+            <xs:enumeration value="Count"/>
+            <xs:enumeration value="DefaultToggleValue"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomBoolean">
+        <xs:restriction base ="xs:string">
+            <xs:enumeration value ="True"/>
+            <xs:enumeration value ="False"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomDatehandlingType">
+        <xs:restriction base ="xs:string">
+            <xs:enumeration value ="Start"/>
+            <xs:enumeration value ="End"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomOperatorTypes">
+        <xs:restriction base ="xs:string">
+            <xs:length value ="4"/>
+            <xs:enumeration value ="in"/>
+            <xs:enumeration value ="not in"/>
+            <xs:enumeration value ="&lt;"/>
+            <xs:enumeration value ="&gt;"/>
+            <xs:enumeration value ="&lt;="/>
+            <xs:enumeration value ="&gt;="/>
+            <xs:enumeration value ="="/>
+            <xs:enumeration value ="!="/>
+            <xs:enumeration value ="&lt;&gt;"/>
+            <xs:enumeration value ="ex"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomComparatorTypes">
+        <xs:restriction base ="xs:string">
+            <xs:length value ="4"/>
+            <xs:enumeration value ="in"/>
+            <xs:enumeration value ="&lt;"/>
+            <xs:enumeration value ="&gt;"/>
+            <xs:enumeration value ="&lt;="/>
+            <xs:enumeration value ="&gt;="/>
+            <xs:enumeration value ="="/>
+            <xs:enumeration value ="!="/>
+            <xs:enumeration value ="&lt;&gt;"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomSpecialTypes">
+        <xs:restriction base ="xs:string">
+            <xs:length value ="11"/>
+            <xs:enumeration value ="Concatenate"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomDataTypes">
+        <xs:restriction base ="xs:string">
+            <xs:enumeration value ="Boolean"/>
+            <xs:enumeration value ="Byte"/>
+            <xs:enumeration value ="Char"/>
+            <xs:enumeration value ="DateTime"/>
+            <xs:enumeration value ="Decimal"/>
+            <xs:enumeration value ="Int16"/>
+            <xs:enumeration value ="Int32"/>
+            <xs:enumeration value ="Int64"/>
+            <xs:enumeration value ="SByte"/>
+            <xs:enumeration value ="Single"/>
+            <xs:enumeration value ="String"/>
+            <xs:enumeration value ="UInt16"/>
+            <xs:enumeration value ="UInt32"/>
+            <xs:enumeration value ="UInt64"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomStringFunctions">
+        <xs:restriction base ="xs:string">
+            <xs:enumeration value ="RemoveLeadingZeros"/>
+            <xs:enumeration value ="SubString"/>
+            <xs:enumeration value ="SubString-Before"/>
+            <xs:enumeration value ="SubString-After"/>
+            <xs:enumeration value ="Replace"/>
+            <xs:enumeration value ="Upper"/>
+            <xs:enumeration value ="Lower"/>
+            <xs:enumeration value ="Trim"/>
+            <xs:enumeration value ="Date"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name ="DomObjectSource">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base ="xs:string">
+                    <xs:enumeration value ="PL"/>
+                    <xs:enumeration value ="OER"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base ="xs:string"/>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+</xs:schema>
